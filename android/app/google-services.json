@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "918113850956",
+    "project_id": "locationtracker-a473e",
+    "storage_bucket": "locationtracker-a473e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918113850956:android:e2ff7d586996877e71c6e9",
+        "android_client_info": {
+          "package_name": "com.ahmet.location_traker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkC_nMNw2XaAzroBe9aV36bHk83RZ2GNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
