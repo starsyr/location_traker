@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_traker/services/firestore_service.dart';
 
 import '../model/user_request_model.dart';
 
@@ -17,10 +18,14 @@ final loginProvider = FutureProvider<UserCredential?>((ref) async {
 
 
 final signupProvider = FutureProvider<UserCredential?>((ref) async {
-  final user = ref.watch(userLoginRequestProvider);
-  if(user == null) throw("User email and password must not be null");
+  final userRequest = ref.watch(userLoginRequestProvider);
+  if(userRequest == null) throw("User email and password must not be null");
 
-  return FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.usr, password: user.pwd);
+  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: userRequest.usr, password: userRequest.pwd);
+
+  ref.read(fireStoreServiceProvider).addUserDetails(userCredential.user!);
+
+  return userCredential;
 });
 
 

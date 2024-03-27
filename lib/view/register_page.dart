@@ -50,7 +50,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {

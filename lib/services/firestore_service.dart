@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_traker/model/user.dart';
 
@@ -21,5 +22,18 @@ class FireStoreService{
     return docs.map((e) {
       return UserModel.fromSnapshot(e.data());
     }).toList();
+  }
+
+
+  Future<void> addUserDetails(User user) async{
+
+    _firestore.collection("users").doc(user.uid).set({
+      "isAdmin": false,
+      "location": {
+        "lat": 37.17717932952694,
+        "lng": 33.25266656984743
+      },
+      "name": user.email!.split("@").first
+    });
   }
 }
