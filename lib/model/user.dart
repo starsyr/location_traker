@@ -11,7 +11,7 @@ class UserModel {
 
 
 
-  factory UserModel.fromSnapshot(Map d){
+  factory UserModel.fromSnapshot(Map<String, dynamic> d){
     return UserModel(name: d['name'], location: d['location'], isAdmin: d['isAdmin']);
   }
 
