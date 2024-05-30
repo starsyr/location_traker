@@ -32,7 +32,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       home: ref.watch(authStateProvider).when(
             data: (user) =>
-                user == null ? const LoginOrRegister() : const HomePage(),
+                user == null ? const LoginOrRegister() : HomePage(id: user.uid,),
             error: (e, s) => const Center(
               child: Text("Error"),
             ),

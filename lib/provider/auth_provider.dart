@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_traker/provider/user_provider.dart';
 import 'package:location_traker/services/firestore_service.dart';
 
 import '../model/user_request_model.dart';
@@ -35,5 +36,6 @@ final authStateProvider = StreamProvider<User?>((ref) {
 
 
 final logoutProvider = FutureProvider<void>((ref) async {
+  ref.invalidate(userProvider);
   return FirebaseAuth.instance.signOut();
 });

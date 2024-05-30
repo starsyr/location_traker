@@ -50,7 +50,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomePage(),
+            builder: (context) => HomePage(id: credential.user!.uid,),
           ),
         );
       } else {

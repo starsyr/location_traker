@@ -34,7 +34,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => HomePage(id: credential.user!.uid,),
           ),
         );
       } else {
