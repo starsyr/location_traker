@@ -1,9 +1,11 @@
 class UserModel {
+  final String id;
   final String name;
-  final Map location;
+  final List<Map> location;
   final bool isAdmin;
 
   UserModel({
+    required this.id,
     required this.name,
     required this.location,
     required this.isAdmin,
@@ -12,13 +14,14 @@ class UserModel {
 
 
   factory UserModel.fromSnapshot(Map<String, dynamic> d){
-    return UserModel(name: d['name'], location: d['location'], isAdmin: d['isAdmin']);
+    return UserModel(id: d['id'], name: d['name'], location: List<Map>.from(d['location']), isAdmin: d['isAdmin']);
   }
 
 
 
   toJson(){
     return {
+      'id': id,
       'name': name,
       'location': location,
       'isAdmin': isAdmin

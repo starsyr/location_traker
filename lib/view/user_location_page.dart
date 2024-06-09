@@ -1,45 +1,85 @@
-import 'dart:math';
+import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../helpers/location_helper.dart';
 import '../model/user.dart';
+import '../services/location_service.dart';
 
-class UserLocationPage extends StatelessWidget {
+
+class UserLocationPage extends ConsumerStatefulWidget {
   final UserModel user;
 
   const UserLocationPage({super.key, required this.user});
 
-  final LatLng circleCenter = const LatLng(37.1771148, 33.2525056);
-  final double circleRadius = 15;
+  @override
+  ConsumerState createState() => _UserLocationPageState();
+}
 
-  bool isWithinCircle(double lat1, double lon1, double lat2, double lon2, double radius) {
-    double distance = haversineDistance(lat1, lon1, lat2, lon2);
-    return distance <= radius;
+class _UserLocationPageState extends ConsumerState<UserLocationPage>  {
+
+  Timer? _timer;
+
+  double? _lat;
+  double? _lng;
+
+  @override
+  void initState() {
+    super.initState();
+    final location = widget.user.location.firstWhere((e){
+      final date = (e['date'] as Timestamp).toDate();
+      return DateTime.now().isAfter(date);
+    });
+    _lat = location['lat'];
+    _lng = location['lng'];
+    _runTimer();
   }
 
-  double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371000; // Radius of the Earth in meters
-    final dLat = (lat2 - lat1) * (3.141592653589793 / 180.0);
-    final dLon = (lon2 - lon1) * (3.141592653589793 / 180.0);
-    final a = 0.5 -
-        cos(dLat) / 2 +
-        cos(lat1 * (3.141592653589793 / 180.0)) * cos(lat2 * (3.141592653589793 / 180.0)) * (1 - cos(dLon)) / 2;
-    return R * 2 * asin(sqrt(a));
+  void _runTimer() {
+    final inCircle = LocationHelper.isWithinCircle(
+      _lat!,
+      _lng!,
+    );
+    if (!inCircle) {
+      if (_timer == null) {
+          print("sssssssssssssssssssssssssssssss");
+        _timer = Timer(const Duration(seconds: 5), () {
+          LocationService.userLocationStream(widget.user.id).listen((value){
+            final location = widget.user.location.firstWhere((e){
+              final date = (e['date'] as Timestamp).toDate();
+              return DateTime.now().isAfter(date);
+            });
+            final inCircle = LocationHelper.isWithinCircle(
+              location['lat'],
+              location['lng'],
+            );
+            if(!inCircle){
+              showDialog(context: context, builder: (context){
+                return AlertDialog(
+                  title: const Text("Uyarı"),
+                  content: Text("5 dakadan falzla ${value.name} alan dışındasın"),
+                );
+              });
+            }
+          });
+        });
+      } else {}
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
-    final inCircle = isWithinCircle(
-      user.location['lat'],
-      user.location['lng'],
-      circleCenter.latitude,
-      circleCenter.longitude,
-      circleRadius,
+    final inCircle = LocationHelper.isWithinCircle(
+      _lat!,
+      _lng!,
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name),
+        title: Text(widget.user.name),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
@@ -64,9 +104,9 @@ class UserLocationPage extends StatelessWidget {
                 Circle(
                   fillColor: Colors.red.withOpacity(0.5),
                   strokeWidth: 0,
-                  radius: circleRadius,
+                  radius: LocationHelper.circleRadius,
                   circleId: const CircleId("redCircle"),
-                  center: circleCenter,
+                  center: LocationHelper.circleCenter,
                 ),
               },
               markers: {
@@ -74,16 +114,16 @@ class UserLocationPage extends StatelessWidget {
                   markerId: const MarkerId("me"),
                   icon: BitmapDescriptor.defaultMarker,
                   position: LatLng(
-                    user.location['lat'],
-                    user.location['lng'],
+                    _lat!,
+                    _lng!,
                   ),
                 ),
               },
               initialCameraPosition: CameraPosition(
                 zoom: 15,
                 target: LatLng(
-                  user.location['lat'],
-                  user.location['lng'],
+                  _lat!,
+                  _lng!,
                 ),
               ),
             ),

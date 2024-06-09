@@ -22,7 +22,7 @@ class HomePage extends ConsumerWidget {
       body: ref.watch(userProvider(id)).when(
           data: (user) {
             // print(user.location);
-            return user.isAdmin ? const AdminPage() : const UserPage();
+            return user.isAdmin ? const AdminPage() : UserPage(user: user,);
           },
           error: (e, s) {
             print(e);

@@ -28,6 +28,7 @@ class FireStoreService{
   Future<void> addUserDetails(User user) async{
 
     _firestore.collection("users").doc(user.uid).set({
+      "id": user.uid,
       "isAdmin": false,
       "location": {
         "lat": 37.17717932952694,
